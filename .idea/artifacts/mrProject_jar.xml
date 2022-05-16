@@ -1,0 +1,15 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="mrProject:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/mrProject_jar</output-path>
+    <root id="archive" name="mrProject.jar">
+      <element id="module-output" name="mrProject" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-databind/2.13.2/jackson-databind-2.13.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-core/2.13.2/jackson-core-2.13.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/fasterxml/jackson/core/jackson-annotations/2.13.2/jackson-annotations-2.13.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mongodb/mongodb-driver/3.12.11/mongodb-driver-3.12.11.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.24/lombok-1.18.24.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mongodb/bson/3.12.11/bson-3.12.11.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mongodb/mongodb-driver-core/3.12.11/mongodb-driver-core-3.12.11.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
