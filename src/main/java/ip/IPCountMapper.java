@@ -34,7 +34,7 @@ public class IPCountMapper extends Mapper<LongWritable, Text, Text, IntWritable>
         // word 변수는 단어가 저장됨
         for (String field : line.split("\\W+")) {
 
-            if (field.length() > 0) {
+            if (!field.isEmpty()) {
 
                 forCnt++;// 반복회수 증가
                 ip += (field + "."); // IP값 저장함
