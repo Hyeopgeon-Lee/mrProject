@@ -18,7 +18,7 @@ public class WordCount {
 
         // 파라미터는 분석할 파일(폴더)과 분석 결과가 저장될 파일(폴더)로 2개를 받음
         if (args.length != 2) {
-            System.out.printf("분석할 폴더(파일) 및 분석결과가 저장될 폴더를 입력해야 합니다.");
+            System.out.print("분석할 폴더(파일) 및 분석결과가 저장될 폴더를 입력해야 합니다.");
             System.exit(-1);
         }
 

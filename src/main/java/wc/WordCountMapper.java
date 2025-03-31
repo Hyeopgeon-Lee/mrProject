@@ -32,7 +32,7 @@ public class WordCountMapper extends Mapper<LongWritable, Text, Text, IntWritabl
         for (String word : line.split("\\W+")) {
 
             // word 변수에 값이 있다면...
-            if (word.length() > 0) {
+            if (!word.isEmpty()) {
 
                 // Suffle and Sort로 데이터를 전달하기
                 // 전달하는 값은 단어와 빈도수(1)를 전달함
