@@ -18,7 +18,7 @@ public class WordCount2Reducer extends Reducer<Text, IntWritable, Text, IntWrita
      * 부모 Reducer 자바 파일에 작성된 reduce 함수를 덮어쓰기 수행
      * reduce 함수는 Suffle and Sort로 처리된 데이터마다 실행됨
      * 처리된 데이터의 수가 500개라면, reduce 함수는  500번 실행됨
-     *
+     * <p>
      * Reducer 객체는 기본값이 1개로 1개의 쓰레드로 처리함
      */
     @Override
