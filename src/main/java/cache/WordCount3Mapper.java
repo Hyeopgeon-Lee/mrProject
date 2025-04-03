@@ -1,42 +1,76 @@
 package cache;
 
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
- * 맵 역할을 수행하기 위해서는 Mapper 자바 파일을 상속받아야 함
- * Mapper 파일의 앞의 2개 데이터 타입(LongWritable, Text)은 분석할 파일의 키과 값의 데이터 타입
- * Mapper 파일의 뒤의 2개 데이터 타입(Text, IntWritable)은 리듀스에 보낼 키와 값의 데이터 타입
+ * 캐시 파일에서 특정 단어 목록을 메모리에 로드한 후,
+ * 입력 파일에서 해당 단어가 나올 경우에만 카운팅하는 Mapper 클래스
  */
 public class WordCount3Mapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
+    // 캐시 파일에서 읽은 단어들을 저장할 Set (중복 방지 & 빠른 조회용)
+    private final Set<String> wordSet = new HashSet<>();
+
     /**
-     * 부모 Mapper 자바 파일에 작성된 map 함수를 덮어쓰기 수행
-     * map 함수는 분석할 파일의 레코드 1줄마다 실행됨
-     * 파일의 라인수가 100개라면, map함수는 100번 실행됨
+     * 맵리듀스 작업 시작 전 한 번 실행됨 (1회)
+     * Distributed Cache에 등록된 파일을 읽어 메모리에 단어 목록으로 저장함
      */
     @Override
-    public void map(LongWritable key, Text value, Context context)
+    protected void setup(Context context) throws IOException {
+        // 등록된 캐시 파일 배열 가져오기
+        URI[] cacheFiles = context.getCacheFiles();
+
+        if (cacheFiles != null) {
+            for (URI cacheFile : cacheFiles) {
+                // HDFS 상 경로에서 파일 이름만 추출 (캐시 파일은 로컬로 복사됨)
+                String fileName = new Path(cacheFile.getPath()).getName();
+
+                // 캐시 파일을 한 줄씩 읽어서 단어 리스트 생성
+                BufferedReader reader = new BufferedReader(new FileReader(fileName));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    line = line.trim().toLowerCase();
+                    if (!line.isEmpty()) {
+                        wordSet.add(line);  // 단어를 Set에 저장
+                    }
+                }
+                reader.close();
+            }
+        }
+    }
+
+    /**
+     * 입력 파일에서 한 줄씩 읽어 단어를 분리한 후,
+     * 캐시 파일에서 등록된 단어와 일치하는 것만 출력으로 넘김
+     */
+    @Override
+    protected void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
 
-        // 분석할 파일의 한 줄 값
+        // 입력 파일의 한 줄
         String line = value.toString();
 
-        // 단어 빈도수 구현은 공백을 기준으로 단어로 구분함
-        // 분석할 한 줄 내용을 공백으로 나눔
-        // word 변수는 공백을 나눠진 단어가 들어감
+        // 공백 또는 특수문자를 기준으로 단어 분리
         for (String word : line.split("\\W+")) {
+            if (!word.isEmpty()) {
+                // 대소문자 구분 없이 처리할 경우 toLowerCase() 필요
+                String lowerWord = word.toLowerCase();
 
-            // word 변수에 값이 있다면...
-            if (word.length() > 0) {
-
-                // Suffle and Sort로 데이터를 전달하기
-                // 전달하는 값은 단어와 빈도수(1)를 전달함
-                context.write(new Text(word), new IntWritable(1));
+                // 캐시에서 불러온 단어 목록에 포함된 단어만 출력
+                if (wordSet.contains(lowerWord)) {
+                    context.write(new Text(lowerWord), new IntWritable(1));
+                }
             }
         }
     }
