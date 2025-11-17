@@ -22,7 +22,7 @@ public class WordCount3 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
         if (args.length != 1) {
-            log.error("사용법: <입력경로> <출력경로>");
+            log.error("사용법: <출력경로>");
             System.exit(-1);
         }
 

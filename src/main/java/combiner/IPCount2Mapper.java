@@ -23,35 +23,20 @@ public class IPCount2Mapper extends Mapper<LongWritable, Text, Text, IntWritable
     public void map(LongWritable key, Text value, Context context)
             throws IOException, InterruptedException {
 
-        // 분석할 파일의 한 줄 값
-        String line = value.toString();
+        // 분석할 로그 한 줄 가져오기
+        String line = value.toString().trim();
 
-        String ip = ""; // 로그부터 추출된 IP
-        int forCnt = 0; // 반복 횟수
+        // 로그 한 줄을 공백 기준으로 나눔
+        String[] data = line.split(" ");
 
-        // 단어 빈도수 구현은 단어가 아닌 것을 기준으로 단어로 구분함
-        // 분석할 한 줄 내용을 단어가 아닌 것으로 나눔
-        // word 변수는 단어가 저장됨
-        for (String field : line.split("\\W+")) {
+        // 로그가 유효하고, 첫 번째 토큰(IP 주소)이 존재하는 경우
+        if (data.length > 3 && data[0].matches("\\d+\\.\\d+\\.\\d+\\.\\d+")) {
 
-            if (!field.isEmpty()) {
+            // 첫 번째 요소는 IP 주소
+            String ip = data[0];
 
-                forCnt++;// 반복회수 증가
-                ip += (field + "."); // IP값 저장함
-
-                // IP는 196.168.0.127 => 4가지 숫자로 조합되기에 반복문 1번부터 4번까지가 IP 주소임
-                if (forCnt == 4) {
-
-                    // ip변수 값은 196.168.0.127. 와 같이 마지막에도 . 붙음
-                    // 마지막 .을 제거하기 위해 0부터 마지막 위치에서 -1 값까지 문자열을 짜름
-                    ip = ip.substring(0, ip.length()-1);
-
-                    // Suffle and Sort로 데이터를 전달하기
-                    // 전달하는 값은 단어와 빈도수(1)를 전달함
-                    context.write(new Text(ip), new IntWritable(1));
-
-                }
-            }
+            // IP 주소를 키로, 1을 값으로 출력
+            context.write(new Text(ip), new IntWritable(1));
         }
     }
 }
