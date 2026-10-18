@@ -69,6 +69,10 @@ public class AccessLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         // 분석할 파일의 한 줄 값
         String[] fields = value.toString().split(" ");
+        if (fields.length < 7) {
+            log.warn("Skipping malformed access log row");
+            return;
+        }
 
         String ip = fields[0]; // IP 추출
         String reqTime = ""; // 요청일시
