@@ -1,0 +1,30 @@
+name: Java 17 Hadoop 3.5 MapReduce build
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Java 17 and cache Maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - name: Verify and package
+        run: mvn -B -ntp clean verify
+      - name: Confirm bytecode version
+        run: |
+          javap -verbose -classpath target/classes wc.WordCount | grep 'major version: 61'
+      - name: Upload example jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapreduce-java17-hadoop35
+          path: target/mr-1.0-SNAPSHOT.jar
