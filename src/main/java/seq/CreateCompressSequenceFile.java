@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.compress.SnappyCodec;
 import org.apache.hadoop.mapreduce.Job;
@@ -74,6 +76,8 @@ public class CreateCompressSequenceFile extends Configured implements Tool {
         SequenceFileOutputFormat.setOutputCompressionType(job, SequenceFile.CompressionType.BLOCK);
         
         // 시퀀스 파일 만들기는 리듀서 작업은 필요하지 않음
+        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(0);
 
         // 맵리듀스 실행
