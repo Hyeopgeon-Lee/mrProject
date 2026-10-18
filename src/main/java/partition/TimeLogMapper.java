@@ -41,12 +41,12 @@ public class TimeLogMapper extends Mapper<LongWritable, Text, Text, Text> {
         // 분석할 파일의 한 줄 값
         String[] fields = value.toString().split(" ");
 
-        if (fields.length > 0) {
+        if (fields.length > 3) {
             String ip = fields[0];
 
             String[] dtFields = fields[3].split("/");
 
-            if (dtFields.length > 1) {
+            if (dtFields.length > 2 && dtFields[2].length() >= 7) {
 
                 // dtFields[2] 필드 값 : 2009:14:58:59 => 여기에서 시간 부분만 가져오기
                 // 인덱스 번호를 5,7 가져오면 됨
