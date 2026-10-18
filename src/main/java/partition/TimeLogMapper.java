@@ -1,6 +1,6 @@
 package partition;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -14,7 +14,7 @@ import java.util.List;
  * Mapper 파일의 앞의 2개 데이터 타입(LongWritable, Text)은 분석할 파일의 키과 값의 데이터 타입
  * Mapper 파일의 뒤의 2개 데이터 타입(Text, Text)은 리듀스(Shuffle and Sort)에 보낼 키와 값의 데이터 타입
  */
-@Log4j
+@Slf4j
 public class TimeLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     // access_log파일로부터 추출될 시간대 정보가 제대로 수집되었는지 확인하기 위해서 만듬
