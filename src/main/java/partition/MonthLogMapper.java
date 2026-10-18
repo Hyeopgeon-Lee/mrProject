@@ -38,7 +38,7 @@ public class MonthLogMapper extends Mapper<LongWritable, Text, Text, Text> {
         // 분석할 파일의 한 줄 값
         String[] fields = value.toString().split(" ");
 
-        if (fields.length > 0) {
+        if (fields.length > 3) {
             String ip = fields[0];
 
             String[] dtFields = fields[3].split("/");
