@@ -35,6 +35,14 @@
             <scope>provided</scope>
         </dependency>
 
+        <!-- SLF4J is available on Hadoop 3.5; compile against the logging API. -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>2.0.17</version>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Packaged for the MongoDB MapReduce examples. -->
         <dependency>
             <groupId>org.mongodb</groupId>
