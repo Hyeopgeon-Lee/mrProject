@@ -3,7 +3,7 @@ package mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import mongo.conn.MongoDBConnection;
 import mongo.dto.AccessLogDTO;
 import org.apache.hadoop.io.IntWritable;
@@ -23,7 +23,7 @@ import java.util.Map;
  * 보통 Mapper에서 보낸 데이터타입과 동일함
  * Reducer 파일의 뒤의 2개 데이터 타입(Text, IntWritable)은 결과 파일 생성에 사용될 키와 값
  */
-@Log4j
+@Slf4j
 public class MonthLog2Reducer extends Reducer<Text, Text, Text, IntWritable> {
 
     // MongoDB 객체
