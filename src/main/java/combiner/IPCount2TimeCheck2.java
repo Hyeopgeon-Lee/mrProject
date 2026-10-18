@@ -1,6 +1,6 @@
 package combiner;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -15,7 +15,7 @@ import org.apache.hadoop.util.ToolRunner;
 /**
  * Combiner 미적용 MapReduce 실행 시간 측정용 드라이버
  */
-@Log4j
+@Slf4j
 public class IPCount2TimeCheck2 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
