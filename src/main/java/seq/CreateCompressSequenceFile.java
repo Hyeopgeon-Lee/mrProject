@@ -1,8 +1,11 @@
 package seq;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
+import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.compress.SnappyCodec;
 import org.apache.hadoop.mapreduce.Job;
@@ -16,8 +19,8 @@ import org.apache.hadoop.util.ToolRunner;
  * 맵리듀스를 실행하기 위한 Main 함수가 존재하는 자바 파일
  * 드라이버 파일로 부름
  */
-@Log4j
-public class CreateCompressSequenceFile extends Configuration implements Tool {
+@Slf4j
+public class CreateCompressSequenceFile extends Configured implements Tool {
 
     // 맵리듀스 실행 함수
     public static void main(String[] args) throws Exception {
@@ -34,30 +37,12 @@ public class CreateCompressSequenceFile extends Configuration implements Tool {
 
     }
 
-    @Override
-    public void setConf(Configuration configuration) {
-
-        // App 이름 정의
-        configuration.set("AppName", "Compress Sequence File Create Test");
-
-    }
-
-    @Override
-    public Configuration getConf() {
-
-        // 맵리듀스 전체에 적용될 변수를 정의할 때 사용
-        Configuration conf = new Configuration();
-
-        // 변수 정의
-        this.setConf(conf);
-
-        return conf;
-    }
 
     @Override
     public int run(String[] args) throws Exception {
 
-        Configuration conf = this.getConf();
+        Configuration conf = getConf();
+        conf.set("AppName", "Compress Sequence File Create Test");
         String appName = conf.get("AppName");
 
         log.info("appName : " + appName);
@@ -91,6 +76,8 @@ public class CreateCompressSequenceFile extends Configuration implements Tool {
         SequenceFileOutputFormat.setOutputCompressionType(job, SequenceFile.CompressionType.BLOCK);
         
         // 시퀀스 파일 만들기는 리듀서 작업은 필요하지 않음
+        job.setOutputKeyClass(LongWritable.class);
+        job.setOutputValueClass(Text.class);
         job.setNumReduceTasks(0);
 
         // 맵리듀스 실행

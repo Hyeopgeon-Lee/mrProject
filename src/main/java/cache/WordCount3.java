@@ -1,6 +1,6 @@
 package cache;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -17,7 +17,7 @@ import java.net.URI;
 /**
  * 캐시 파일(/comedies)을 메모리에 올려 필터링하는 MapReduce 드라이버
  */
-@Log4j
+@Slf4j
 public class WordCount3 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {

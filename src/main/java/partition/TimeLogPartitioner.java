@@ -54,7 +54,12 @@ public class TimeLogPartitioner extends Partitioner<Text, Text> {
     public int getPartition(Text key, Text value, int numReduceTasks) {
 
         // 실행될 리듀스 번호를 시간대에 따라 매핑
-        return times.get(value.toString());
+        if (numReduceTasks <= 0) return 0;
+        Integer index = times.get(value.toString());
+        if (index == null) {
+            throw new IllegalArgumentException("Invalid hour: " + value);
+        }
+        return Math.floorMod(index, numReduceTasks);
     }
 
 }

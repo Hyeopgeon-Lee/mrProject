@@ -3,7 +3,7 @@ package mongo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import mongo.conn.MongoDBConnection;
 import mongo.dto.AccessLogDTO;
 import org.apache.hadoop.io.LongWritable;
@@ -19,11 +19,12 @@ import java.util.Map;
  * Mapper 파일의 앞의 2개 데이터 타입(LongWritable, Text)은 분석할 파일의 키과 값의 데이터 타입
  * Mapper 파일의 뒤의 2개 데이터 타입(Text, Text)은 리듀스(Shuffle and Sort)에 보낼 키와 값의 데이터 타입
  */
-@Log4j
+@Slf4j
 public class AccessLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     // MongoDB 객체
     private MongoDatabase mongodb;
+    private MongoDBConnection connection;
 
     // 저장될 MongoDB 컬렉션명
     private String colNm = "ACCESS_LOG";
@@ -33,29 +34,11 @@ public class AccessLogMapper extends Mapper<LongWritable, Text, Text, Text> {
             throws IOException, InterruptedException {
 
         //MongoDB 객체 생성을 통해 접속
-        this.mongodb = new MongoDBConnection().getMongoDB();
+        this.connection = new MongoDBConnection();
+        this.mongodb = connection.getMongoDB();
 
-        // 컬렉션을 생성할지 결정할 변수(true : 생성 / false : 미생성)
-        boolean create = true;
-
-        // 컬렉션이 존재하는지 체크
-        // Spring-data-mongo는 컬렉션 존재 여부 체크 함수를 제공하지만,
-        // MongoDriver 라이브러리는 제공하지 않아, 컬렉션 존재 여부 체크 함수를 만들어서 사용해야 함
-        for (String s : this.mongodb.listCollectionNames()) {
-
-            // 컬렉션 존재하면 생성하지 못하도록 create변수를 false를 변경함
-            if (this.colNm.equals(s)) {
-                create = false;
-                break;
-            }
-
-        }
-
-        if (create) { // 컬렉션이 생성안되었으면 생성하기
-            // 컬렉션 생성
-            this.mongodb.createCollection(this.colNm);
-
-        }
+        // MongoDB creates a collection automatically on first insert.
+        // Do not perform a check-then-create across parallel Mapper tasks.
     }
 
     /**
@@ -69,6 +52,10 @@ public class AccessLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
         // 분석할 파일의 한 줄 값
         String[] fields = value.toString().split(" ");
+        if (fields.length < 7) {
+            log.warn("Skipping malformed access log row");
+            return;
+        }
 
         String ip = fields[0]; // IP 추출
         String reqTime = ""; // 요청일시
@@ -112,6 +99,9 @@ public class AccessLogMapper extends Mapper<LongWritable, Text, Text, Text> {
             throws IOException, InterruptedException {
 
         // MongoDB 접속 해제
+        if (connection != null) {
+            connection.close();
+        }
         this.mongodb = null;
 
     }

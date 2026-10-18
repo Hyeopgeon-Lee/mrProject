@@ -1,6 +1,6 @@
 package success;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
@@ -14,7 +14,7 @@ import java.io.IOException;
  * Mapper 파일의 앞의 2개 데이터 타입(LongWritable, Text)은 분석할 파일의 키과 값의 데이터 타입
  * Mapper 파일의 뒤의 2개 데이터 타입(Text, IntWritable)은 리듀스에 보낼 키와 값의 데이터 타입
  */
-@Log4j
+@Slf4j
 public class ResultCountMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
 
     // 맵리듀스 잡 이름

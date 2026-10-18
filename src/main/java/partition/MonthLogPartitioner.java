@@ -42,7 +42,12 @@ public class MonthLogPartitioner extends Partitioner<Text, Text> {
     public int getPartition(Text key, Text value, int numReduceTasks) {
 
         // 실행될 리듀스 번호를 월에 따라 매핑
-        return months.get(value.toString());
+        if (numReduceTasks <= 0) return 0;
+        Integer index = months.get(value.toString());
+        if (index == null) {
+            throw new IllegalArgumentException("Invalid month: " + value);
+        }
+        return Math.floorMod(index, numReduceTasks);
     }
 
 }

@@ -1,6 +1,6 @@
 package partition;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -14,7 +14,7 @@ import java.util.List;
  * Mapper 파일의 앞의 2개 데이터 타입(LongWritable, Text)은 분석할 파일의 키과 값의 데이터 타입
  * Mapper 파일의 뒤의 2개 데이터 타입(Text, Text)은 리듀스(Shuffle and Sort)에 보낼 키와 값의 데이터 타입
  */
-@Log4j
+@Slf4j
 public class TimeLogMapper extends Mapper<LongWritable, Text, Text, Text> {
 
     // access_log파일로부터 추출될 시간대 정보가 제대로 수집되었는지 확인하기 위해서 만듬
@@ -41,12 +41,12 @@ public class TimeLogMapper extends Mapper<LongWritable, Text, Text, Text> {
         // 분석할 파일의 한 줄 값
         String[] fields = value.toString().split(" ");
 
-        if (fields.length > 0) {
+        if (fields.length > 3) {
             String ip = fields[0];
 
             String[] dtFields = fields[3].split("/");
 
-            if (dtFields.length > 1) {
+            if (dtFields.length > 2 && dtFields[2].length() >= 7) {
 
                 // dtFields[2] 필드 값 : 2009:14:58:59 => 여기에서 시간 부분만 가져오기
                 // 인덱스 번호를 5,7 가져오면 됨

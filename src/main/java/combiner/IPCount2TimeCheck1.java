@@ -1,6 +1,6 @@
 package combiner;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
@@ -15,7 +15,7 @@ import org.apache.hadoop.util.ToolRunner;
 /**
  * Combiner가 적용된 맵리듀스 실행 시간 측정용 드라이버
  */
-@Log4j
+@Slf4j
 public class IPCount2TimeCheck1 extends Configured implements Tool {
 
     public static void main(String[] args) throws Exception {
